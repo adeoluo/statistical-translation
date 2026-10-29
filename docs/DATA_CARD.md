@@ -1,22 +1,17 @@
 # Data Card - Statistical Translation
 
-## Sources & provenance
-- Where each dataset came from (links), collection method, dates.
+The project bundles one small, synthetic parallel corpus with gold alignments. There is no
+external data and nothing is downloaded.
 
-## Licensing
-- License of each source and whether usage complies. Redistribution terms.
+## bundled corpus (`src/statistical_translation/data.py`)
 
-## Composition
-- Size, format, fields, language(s), modality.
-
-## Preprocessing & filtering
-- Cleaning, dedup, PII handling, filtering rules.
-
-## Contamination checks
-- How you ensured evaluation data is not in training / few-shot context.
-
-## Known biases & gaps
-- Representation gaps, label noise, sampling bias.
+- **Provenance:** authored for this project. English source sentences paired with pseudo-French
+  targets, covering determiners, nouns, adjectives, and adjective reordering.
+- **Gold alignments:** a held-out set of pairs with hand-authored sure word alignments for
+  alignment-error-rate evaluation.
+- **Licensing:** authored by this repository; MIT.
+- **Known gaps:** tiny, clean, and synthetic; real bitext is noisier and larger.
 
 ## Ethical considerations
-- Consent, sensitive content, privacy.
+
+The corpus is synthetic and contains no personal, sensitive, or copyrighted content.

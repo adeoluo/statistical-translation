@@ -1,27 +1,37 @@
-# Model / System Card - Statistical Translation
+# System Card - Statistical Translation
 
 ## Overview
-- **What it is:** 1 - 2 sentences.
-- **Base model(s):** e.g., Claude 3.5 Sonnet / GPT-4o / Llama-3-8B / from-scratch.
-- **Version & date:**
+
+- **What it is:** IBM Model 1 and Model 2 word alignment models trained from scratch by
+  expectation-maximization, with alignment and word-translation queries.
+- **What it is not:** a full translation system; it aligns words, not phrases, and has no
+  language model or decoder.
+- **Version:** 0.1.0.
 
 ## Intended use
-- **Primary use cases:**
-- **Primary users:**
+
+- **Primary use cases:** learning how statistical word alignment works; producing word
+  alignments from small parallel corpora.
+- **Primary users:** engineers and students studying machine translation.
 
 ## Out-of-scope / prohibited use
-- Where this should **not** be used, and why.
+
+- Not a production translator.
+- Pure-Python training limits corpus size.
 
 ## Performance
-- Summary of key metrics (link to [`EVALUATION_REPORT.md`](EVALUATION_REPORT.md)).
-- Known performance disparities across inputs / subgroups.
 
-## Risks & limitations
-- Failure modes, biases, hallucination behavior, brittleness.
-- **Dual-use / misuse considerations.**
+See the README: alignment error rate of 0.250 for both models on held-out gold alignments.
+
+## Risks and limitations
+
+- Word-level only; no phrase or reordering model beyond Model 2's positions.
+- Small, synthetic corpus.
 
 ## Safety mitigations
-- Guardrails, filtering, human-in-the-loop, abstention behavior.
+
+- Deterministic training; offline; bounded request sizes in the service.
 
 ## Environmental / cost footprint
-- Compute used; approximate cost / energy where relevant.
+
+Negligible; training runs in a few milliseconds on the bundled corpus.
