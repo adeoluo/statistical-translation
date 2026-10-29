@@ -1,21 +1,24 @@
 # Threat Model - Statistical Translation
 
 ## Assets
-- What's worth protecting (data, keys, model, user trust, budget).
+
+- Integrity of the learned tables and the alignment and translation outputs.
 
 ## Trust boundaries
-- Where untrusted input crosses into the system (reference the architecture diagram).
 
-## Threats (STRIDE + LLM-specific)
+- **Source and target sentences are untrusted input to the service.** They are tokenized and
+  aligned, never executed, and length-bounded.
+
+## Threats and mitigations
 
 | Threat | Vector | Impact | Mitigation |
 |---|---|---|---|
-| Prompt injection | Untrusted content in context / tools | Data exfiltration, unsafe actions | Input/output filtering, tool allow-list, least privilege |
-| Jailbreak | Adversarial user prompt | Policy bypass | System-prompt hardening, output classifier, refusal evaluation |
-| Data exfiltration | Model echoes secrets / PII | Privacy breach | Secret scanning, output redaction, no secrets in context |
-| Excessive cost | Unbounded loops / large inputs | $ blowout | Token/step budgets, rate limits, timeouts |
-| Tool abuse | Agent calls dangerous tool | Destructive action | Approval gates, sandboxing, dry-run |
-| Supply chain | Malicious dependency | Code execution | Pinned dependencies, Dependabot, SBOM |
+| Unbounded computation | Very long sentences | Resource use | Inputs length-bounded |
+| Unbounded results | Huge `k` | Large responses | `k` bounded to 25 |
+| Irreproducible training | Nondeterministic EM | Flaky tables | Deterministic EM over fixed data |
+| Supply-chain compromise | Malicious dependency | Code execution | Zero runtime dependencies; Dependabot and CodeQL in continuous integration |
 
 ## Residual risk
-- What remains after mitigations and why it's acceptable.
+
+Alignment quality depends on the training bitext; out-of-domain input aligns poorly. This is a
+capability limit of the method, not a security flaw.
