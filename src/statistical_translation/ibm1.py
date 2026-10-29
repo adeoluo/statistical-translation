@@ -44,10 +44,16 @@ class IBMModel1:
         return self._t.get((target_word, source_word), 0.0)
 
     def train(self, pairs: Sequence[SentencePair], *, iterations: int = 15) -> list[float]:
-        """Train by EM and return the mean log-likelihood per iteration."""
+        """Train by EM and return the mean log-likelihood per iteration.
+
+        Returns an empty list and leaves the model empty when there is nothing to
+        train on (no pairs, or no target tokens), rather than dividing by zero.
+        """
         target_vocab = vocabulary([pair.target for pair in pairs])
-        uniform = 1.0 / len(target_vocab)
         self._t = {}
+        if not target_vocab:
+            return []
+        uniform = 1.0 / len(target_vocab)
         for pair in pairs:
             for target_word in pair.target:
                 for source_word in pair.source_with_null():
@@ -94,6 +100,8 @@ class IBMModel1:
 
     def translate_word(self, source_word: str, *, k: int = 1) -> list[tuple[str, float]]:
         """Return the ``k`` most probable target words for a source word."""
+        if k <= 0:
+            return []
         candidates = [
             (target_word, probability)
             for (target_word, current_source), probability in self._t.items()
