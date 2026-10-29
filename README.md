@@ -20,8 +20,7 @@
 Before neural machine translation, statistical machine translation learned to translate from
 parallel text alone, with no dictionary and no supervision of which words correspond. The IBM
 models are the foundation: they discover word alignments between a source and target sentence
-using **expectation-maximization**. This project implements **Model 1 and Model 2 from first
-principles** - the EM training, the alignment inference, and the standard **alignment error
+using **expectation-maximization**. This project implements **Model 1 and Model 2 from scratch** - the EM training, the alignment inference, and the standard **alignment error
 rate** evaluation - with **zero runtime dependencies**.
 
 ## Architecture
