@@ -45,6 +45,12 @@ def _cmd_translate(args: argparse.Namespace) -> None:
         print(f"  {word:<12} {probability:.3f}")
 
 
+def _cmd_serve(args: argparse.Namespace) -> None:
+    from statistical_translation.service import serve
+
+    serve(host=args.host, port=args.port)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="statistical-translation", description=__doc__)
     parser.add_argument("--iterations", type=int, default=15)
@@ -60,7 +66,16 @@ def main(argv: list[str] | None = None) -> None:
     translate.add_argument("word")
     translate.add_argument("--k", type=int, default=3)
 
-    handlers = {"evaluate": _cmd_evaluate, "align": _cmd_align, "translate": _cmd_translate}
+    serve = sub.add_parser("serve", help="start the HTTP alignment service")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8000)
+
+    handlers = {
+        "evaluate": _cmd_evaluate,
+        "align": _cmd_align,
+        "translate": _cmd_translate,
+        "serve": _cmd_serve,
+    }
     args = parser.parse_args(argv)
     handlers[args.command](args)
 
