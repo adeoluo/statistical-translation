@@ -20,7 +20,7 @@ translation over a standard-library HTTP service. Deterministic over fixed data.
 ## Substantial tradeoffs
 
 - **Expectation-maximization vs heuristic co-occurrence.** EM models competition between
-  candidate alignments and is principled, at a higher cost than heuristics like Dice, which
+  candidate alignments and is exact, at a higher cost than heuristics like Dice, which
   ignore it.
 - **Model 2 vs Model 1.** Model 2's position model helps on reordered sentences but is
   non-convex and must be warm-started from Model 1; Model 1 is convex and simpler but
