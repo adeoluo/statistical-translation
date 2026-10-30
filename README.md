@@ -61,6 +61,29 @@ and correctly aligning content words (`maison` to `house`, `rouge` to `red`) acr
 adjective reordering between the two languages. On this small corpus Model 2's position model
 matches Model 1; its advantage grows with longer, more reordered sentences.
 
+### Scale
+
+`benchmarks/scale.py` trains Model 2 once on a full-coverage synthetic lexicon, then runs word
+alignment over progressively larger synthetic parallel corpora and records wall-clock time,
+alignment throughput, peak memory (`tracemalloc`), and AER. Each generated pair carries a known
+gold alignment (determiner, noun, and a reordered adjective), so AER is exact. Timing is
+measured without tracemalloc (which slows every allocation); peak memory is traced separately
+around the corpus plus a single alignment. Throughput is roughly flat near 60,000 to 75,000
+pairs per second and peak memory grows linearly with the corpus. On this learnable synthetic
+task the trained model aligns every gold link (AER 0.000). Run with
+`uv run python benchmarks/scale.py`.
+
+| Pairs | Seconds | Throughput (pairs/sec) | Peak memory (MiB) | AER |
+|---:|---:|---:|---:|---:|
+| 10000 | 0.13 | 74961.4 | 6.97 | 0.000 |
+| 20000 | 0.38 | 52587.2 | 13.63 | 0.000 |
+| 40000 | 0.63 | 63895.4 | 27.41 | 0.000 |
+| 80000 | 1.05 | 76333.0 | 54.98 | 0.000 |
+
+Honest caveat: the corpus is synthetic with a tiny controlled lexicon, so AER is perfect by
+construction; this pure-Python implementation is not benchmarked against compiled alignment
+toolkits.
+
 ## Demonstration
 
 ```text
