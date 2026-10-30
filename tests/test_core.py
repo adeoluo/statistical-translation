@@ -14,6 +14,25 @@ def test_tokenize_and_null() -> None:
     assert tokenize("The, Cat!") == ["the", "cat"]
 
 
+def test_tokenize_preserves_accents_digits_underscores() -> None:
+    # Regression: [a-z]+ dropped accented French text, digits, and underscores.
+    assert tokenize("Montréal café") == ["montréal", "café"]
+    assert tokenize("rue 2024 niveau_3") == ["rue", "2024", "niveau_3"]
+
+
+def test_train_on_empty_corpus_is_graceful() -> None:
+    model = IBMModel1()
+    assert model.train([]) == []
+    # a corpus whose targets tokenize to nothing must not divide by zero
+    assert model.train([SentencePair.from_text("hello", "!!!")]) == []
+
+
+def test_translate_word_non_positive_k_returns_empty() -> None:
+    model = IBMModel1()
+    assert model.translate_word("x", k=0) == []
+    assert model.translate_word("x", k=-1) == []
+
+
 def _toy_corpus() -> list[SentencePair]:
     # A tiny but consistent bilingual corpus (English source, pseudo-target).
     return [
