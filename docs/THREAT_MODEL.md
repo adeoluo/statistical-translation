@@ -16,7 +16,7 @@
 | Unbounded computation | Very long sentences | Resource use | Inputs length-bounded |
 | Unbounded results | Huge `k` | Large responses | `k` bounded to 25 |
 | Irreproducible training | Nondeterministic EM | Flaky tables | Deterministic EM over fixed data |
-| Supply-chain compromise | Malicious dependency | Code execution | No third-party runtime packages; Dependabot and CodeQL in continuous integration |
+| Supply-chain compromise | Malicious dependency | Code execution | No third-party runtime packages; development tools pinned in `uv.lock`; CodeQL in continuous integration |
 
 ## Residual risk
 
