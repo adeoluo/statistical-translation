@@ -5,12 +5,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/adeoluo/statistical-translation/actions/workflows/ci.yml"><img alt="Continuous integration" src="https://github.com/adeoluo/statistical-translation/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="Coverage" src="https://img.shields.io/badge/coverage-96%25-brightgreen">
+  <a href="https://github.com/adeoluo/statistical-translation/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/adeoluo/statistical-translation/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/adeoluo/statistical-translation/releases"><img alt="Release" src="https://img.shields.io/github/v/release/adeoluo/statistical-translation"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.11%20%7C%203.12-blue">
-  <img alt="Type checked" src="https://img.shields.io/badge/mypy-strict-blue">
-  <img alt="Runtime dependencies" src="https://img.shields.io/badge/runtime%20deps-0-brightgreen">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
 
 ---
@@ -21,12 +19,12 @@ Before neural machine translation, statistical machine translation learned to tr
 parallel text alone, with no dictionary and no supervision of which words correspond. The IBM
 models are the foundation: they discover word alignments between a source and target sentence
 using **expectation-maximization**. This project implements **Model 1 and Model 2 from scratch** - the EM training, the alignment inference, and the standard **alignment error
-rate** evaluation - with **zero runtime dependencies**.
+rate** evaluation.
 
 ## Architecture
 
 <p align="center">
-  <img src="docs/architecture/architecture.svg" alt="System architecture" width="900">
+  <img src="docs/architecture/architecture.svg" alt="Architecture diagram" width="860">
 </p>
 
 Model 1 learns word translation probabilities ``t(target | source)`` by EM; Model 2 adds a
@@ -34,7 +32,7 @@ position-dependent alignment probability ``q(i | j, l, m)`` on top, initialized 
 The service aligns sentence pairs and translates words from the learned tables. See the
 [ADRs](docs/adr/) for the key decisions.
 
-## How expectation-maximization learns alignment
+### How expectation-maximization learns alignment
 
 No one tells the model which words align; it discovers this from co-occurrence:
 
@@ -45,6 +43,14 @@ No one tells the model which words align; it discovers this from co-occurrence:
 Model 1's likelihood is **convex**, so EM converges to the global optimum regardless of
 initialization - which is why Model 2 is seeded from a trained Model 1 to avoid poor local
 optima.
+
+### Components
+
+- **corpus** - sentence pairs with a NULL source token and tokenization.
+- **ibm1** - Model 1 word translation probabilities trained by EM.
+- **ibm2** - Model 2 with a position-dependent alignment probability.
+- **data** - a parallel corpus with held-out gold alignments.
+- **evaluation** - alignment error rate.
 
 ## Results
 
@@ -81,22 +87,8 @@ task the trained model aligns every gold link (AER 0.000). Run with
 | 80000 | 1.05 | 76333.0 | 54.98 | 0.000 |
 
 Honest caveat: the corpus is synthetic with a tiny controlled lexicon, so AER is perfect by
-construction; this pure-Python implementation is not benchmarked against compiled alignment
+construction; this Python implementation is not benchmarked against compiled alignment
 toolkits.
-
-## Demonstration
-
-```text
-$ python -m statistical_translation align "the red house" "la maison rouge"
-Alignment of 'la maison rouge' to 'the red house':
-  la           -> the
-  maison       -> house
-  rouge        -> red
-
-$ python -m statistical_translation translate house
-Most probable translations of 'house':
-  maison       0.98
-```
 
 ## Quickstart
 
@@ -121,9 +113,25 @@ model.train(pairs, iterations=15)
 print(model.translate_word("house", k=1))
 ```
 
-## Running the service
+## Usage
 
-A dependency-free HTTP service trains the models once at startup and serves alignment:
+### Demonstration
+
+```text
+$ python -m statistical_translation align "the red house" "la maison rouge"
+Alignment of 'la maison rouge' to 'the red house':
+  la           -> the
+  maison       -> house
+  rouge        -> red
+
+$ python -m statistical_translation translate house
+Most probable translations of 'house':
+  maison       0.98
+```
+
+### HTTP service
+
+A standard-library HTTP service trains the models once at startup and serves alignment:
 
 ```bash
 python -m statistical_translation serve --port 8000
@@ -140,20 +148,29 @@ error, and latency metrics in Prometheus text format). A production-style stress
 scaling path and tradeoffs are in [docs/SCALING.md](docs/SCALING.md) and a full walk-through
 is in the [case study](docs/CASE_STUDY.md).
 
-## Components
-
-- **corpus** - sentence pairs with a NULL source token and tokenization.
-- **ibm1** - Model 1 word translation probabilities trained by EM.
-- **ibm2** - Model 2 with a position-dependent alignment probability.
-- **data** - a parallel corpus with held-out gold alignments.
-- **evaluation** - alignment error rate.
-
 ## Design decisions
 
 - **Expectation-maximization over unaligned text.** Alignments are latent, so they are learned
   by EM rather than supervised. ([ADR-0002](docs/adr/0002-expectation-maximization.md))
 - **Model 2 initialized from Model 1.** Model 2's likelihood is not convex, so it is seeded
   from Model 1's global optimum. ([ADR-0003](docs/adr/0003-model2-initialization.md))
+
+## Testing
+
+```bash
+make lint        # ruff format --check and ruff check
+make type        # mypy src (strict)
+make test        # pytest
+make coverage    # pytest with an 80% coverage gate
+```
+
+The suite in `tests/` has 19 tests:
+
+- `test_core.py`: tokenization and the NULL token, graceful handling of an empty corpus, EM increasing the log-likelihood, and Model 1 learning word translations and correct alignments.
+- `test_evaluation.py`: Model 2 learning alignment, a bounded alignment error rate, Model 2 at least matching Model 1, and the `evaluate`, `align`, and `translate` CLI commands.
+- `test_service.py`: the HTTP routes through the handler layer (no socket), input validation, metrics, and unknown routes.
+
+CI (`.github/workflows/ci.yml`) runs format, lint, type check, and the coverage-gated tests on Python 3.11 and 3.12, then builds the package and the Docker image. CodeQL runs in `codeql.yml`.
 
 ## Responsible AI
 
@@ -165,7 +182,7 @@ is in the [case study](docs/CASE_STUDY.md).
 
 - Models 1 and 2 align words, not phrases; a full translation system adds phrase extraction
   and a language model, a deliberate boundary.
-- Training is pure Python, suited to learning and small corpora.
+- Training runs in interpreted Python, suited to learning and small corpora.
 - The bundled corpus is synthetic; real bitext is noisier.
 
 ## Roadmap
@@ -176,5 +193,4 @@ is in the [case study](docs/CASE_STUDY.md).
 
 ## License
 
-[MIT](LICENSE). Part of an artificial intelligence engineering portfolio by
-[adeoluo](https://github.com/adeoluo).
+Released under the [MIT License](LICENSE).

@@ -11,7 +11,7 @@ measured with the standard-library ``tracemalloc`` module, and AER.
 Timing is measured without tracemalloc (which otherwise slows every allocation);
 peak memory is traced separately around the corpus plus a single alignment,
 which is faithful because pairs are aligned one at a time. The corpus is
-synthetic. This pure-Python from-scratch implementation is not competitive on
+synthetic. This from-scratch Python implementation is not competitive on
 wall-clock time with compiled alignment toolkits; the goal is to show how EM
 alignment scales with the number of pairs. Deterministic and offline; run with:
 
@@ -142,7 +142,7 @@ def run_scale(sizes: tuple[int, ...] = WORKLOAD_SIZES) -> list[ScaleRow]:
 
 def main() -> None:
     print("Synthetic parallel corpus with gold links; from-scratch IBM Model 2.")
-    print("Pure-Python alignment; not benchmarked against compiled alignment toolkits.")
+    print("Interpreted-Python alignment; not benchmarked against compiled alignment toolkits.")
     print(f"{'pairs':>8}  {'seconds':>9}  {'pairs/sec':>11}  {'peak MiB':>9}  {'AER':>7}")
     for row in run_scale():
         print(

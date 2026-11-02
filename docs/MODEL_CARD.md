@@ -17,7 +17,7 @@
 ## Out-of-scope / prohibited use
 
 - Not a production translator.
-- Pure-Python training limits corpus size.
+- Training runs in interpreted Python, which limits corpus size.
 
 ## Performance
 

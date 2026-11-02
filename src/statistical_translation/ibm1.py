@@ -10,7 +10,7 @@ equally likely a priori. Those probabilities are learned with EM:
 * **M step** - re-estimate ``t`` by normalizing the accumulated counts.
 
 Model 1's likelihood is convex, so EM converges to the global optimum regardless
-of initialization. Everything here is pure Python.
+of initialization.
 """
 
 from __future__ import annotations

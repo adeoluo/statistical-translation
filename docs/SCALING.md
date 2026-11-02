@@ -12,7 +12,7 @@ translation over a standard-library HTTP service. Deterministic over fixed data.
 | Stage | Bottleneck | Change |
 |---|---|---|
 | One process | Align CPU, global interpreter lock | One replica per core |
-| Large corpus | Pure-Python EM | Train offline; load tables; prune rare pairs |
+| Large corpus | Interpreted-Python EM | Train offline; load tables; prune rare pairs |
 | Long sentences | Quadratic alignment table | Beam over alignment positions |
 | Memory | Dense translation table | Prune low-probability entries; hashing |
 | Many replicas | Repeated startup training | Train once; ship tables as an artifact |

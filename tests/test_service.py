@@ -1,4 +1,4 @@
-"""Tests for the dependency-free HTTP alignment service (pure handler layer)."""
+"""Tests for the standard-library HTTP alignment service (pure handler layer)."""
 
 from __future__ import annotations
 

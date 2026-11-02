@@ -8,7 +8,7 @@ The operational contract of the alignment service.
 uv run python -m statistical_translation serve --host 0.0.0.0 --port 8000
 ```
 
-A standard-library HTTP server with **zero runtime dependencies**. Both models are trained
+A standard-library HTTP server. Both models are trained
 once at startup and then serve stateless requests.
 
 ## Endpoints

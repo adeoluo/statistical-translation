@@ -1,4 +1,4 @@
-"""A dependency-free HTTP service exposing the trained alignment models.
+"""A standard-library HTTP service exposing the trained alignment models.
 
 The service trains Model 1 and Model 2 once at startup over the bundled corpus and
 then aligns sentence pairs, translates words, and reports held-out alignment error
