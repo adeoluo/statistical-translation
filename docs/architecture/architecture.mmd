@@ -5,55 +5,41 @@ flowchart LR
     classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
 
-    CLI(["CLI<br/>evaluate | align | translate | serve"]):::edge
-    Client(["HTTP client"]):::edge
-
-    subgraph Data["Corpus (bundled, English to pseudo-French)"]
+    subgraph Interfaces["Interfaces"]
         direction TB
-        Corpus[("Parallel training pairs")]:::data
-        Gold[("Held-out pairs<br/>gold sure links")]:::data
-        Tokenize["Tokenizer<br/>lowercase words + NULL source token"]:::core
+        CLI["CLI<br/>evaluate, align, serve"]:::edge
+        Client(["HTTP client"]):::edge
+        Router["HTTP router<br/>/align /translate"]:::core
+        Validate["Validation<br/>text, length, k"]:::control
+        CLI ~~~ Client --> Router --> Validate
     end
 
-    subgraph Train["Training and learned tables (EM, once at startup)"]
+    subgraph Corpus["Bundled corpus"]
         direction TB
-        M1["IBM Model 1 EM<br/>expected counts, normalize t"]:::core
-        M2["IBM Model 2 EM<br/>updates t and q"]:::core
-        T1[("Model 1 table<br/>t(target | source)")]:::data
-        T2[("Model 2 tables<br/>t and q(i | j, l, m)")]:::data
+        Pairs[("Parallel pairs<br/>English to pseudo-French")]:::data
+        Tokenize["Tokenizer<br/>words + NULL token"]:::core
+        Gold[("Gold sure links<br/>held-out pairs")]:::data
+        Pairs --> Tokenize ~~~ Gold
     end
 
-    subgraph Edge["Interfaces (stdlib HTTP)"]
+    subgraph Train["EM training (at startup)"]
         direction TB
-        Router["Router<br/>/health | /ready | /align | /translate | /evaluate"]:::core
-        Validate["Validation<br/>non-empty text, length cap, k range"]:::control
+        M1["IBM Model 1 EM<br/>learns t(f | e)"]:::core
+        M2["IBM Model 2 EM<br/>adds q(i | j, l, m)"]:::core
+        T1[("Model 1 table<br/>t")]:::data
+        T2[("Model 2 tables<br/>t and q")]:::data
+        M1 --> T1 ~~~ M2 --> T2
     end
 
-    subgraph Infer["Inference (pure reads of the tables)"]
+    subgraph Obs["Inference and evaluation"]
         direction TB
-        Align["Word alignment<br/>argmax q x t per target word"]:::core
-        Translate["Word translation<br/>top-k t(target | source)"]:::core
+        Align["Word alignment<br/>argmax q x t"]:::core
+        Translate["Word translation<br/>top-k by t"]:::core
+        AER["Alignment error rate<br/>Model 1 vs Model 2"]:::obs
+        Metrics["Route metrics<br/>Prometheus text"]:::obs
+        Translate ~~~ Align --> AER ~~~ Metrics
     end
 
-    subgraph Eval["Evaluation and observability"]
-        direction TB
-        AER["Alignment error rate<br/>Model 1 vs Model 2, NULL unscored"]:::obs
-        Metrics["Route metrics<br/>Prometheus GET /metrics"]:::obs
-    end
-
-    CLI -->|train models| M1
-    Corpus -->|sentence pairs| Tokenize
-    Tokenize -->|tokens + NULL| M1
-    M1 -->|initializes t| M2
-    M1 --> T1
-    M2 --> T2
-    Client -->|JSON request| Router --> Validate
-    Validate -->|POST /align| Align
-    Validate -->|POST /translate| Translate
-    T2 -.->|t and q| Align
-    T1 -.->|t| Translate
-    Router -->|GET /evaluate| AER
-    Align -->|Model 2 links| AER
-    T1 -.->|Model 1 links| AER
-    Gold -.->|sure links| AER
-    Router -.-> Metrics
+    Interfaces -->|train models| Train
+    Corpus -->|tokens + NULL| Train
+    Train -->|learned tables| Obs
