@@ -152,6 +152,22 @@ error, and latency metrics in Prometheus text format). A production-style stress
 scaling path and tradeoffs are in [docs/SCALING.md](docs/SCALING.md) and a full walk-through
 is in the [case study](docs/CASE_STUDY.md).
 
+### Demos
+
+Recorded from real runs with [vhs](https://github.com/charmbracelet/vhs); each tape is in `docs/demo/`.
+
+Word alignment of a sentence pair and a word translation.
+
+<p align="center">
+  <img src="docs/demo/align.gif" alt="Word alignment of a sentence pair and a word translation" width="860">
+</p>
+
+Alignment error rate on the held-out pairs.
+
+<p align="center">
+  <img src="docs/demo/evaluate.gif" alt="Alignment error rate on the held-out pairs" width="860">
+</p>
+
 ## Design decisions
 
 - **Expectation-maximization over unaligned text.** Alignments are latent, so they are learned
