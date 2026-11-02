@@ -1,9 +1,59 @@
-flowchart LR
-    Corpus[(Parallel corpus)] --> Model1[IBM Model 1 EM]
-    Model1 -->|initializes| Model2[IBM Model 2 EM]
-    Model2 --> Tables[(Translation and alignment tables)]
-    Tables --> Align[Most probable alignment]
-    Gold[(Gold alignments)] --> AER[Alignment error rate]
-    Align --> AER
-    Client([Client]) --> Router[HTTP router]
-    Router --> Align
+flowchart TD
+    classDef edge     fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+    classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+
+    CLI(["CLI<br/>evaluate | align | translate | serve"]):::edge
+    Client(["HTTP client"]):::edge
+
+    subgraph Data["Corpus (bundled, English to pseudo-French)"]
+        direction TB
+        Corpus[("Parallel training pairs")]:::data
+        Gold[("Held-out pairs<br/>gold sure links")]:::data
+        Tokenize["Tokenizer<br/>lowercase words + NULL source token"]:::core
+    end
+
+    subgraph Train["Training and learned tables (EM, once at startup)"]
+        direction TB
+        M1["IBM Model 1 EM<br/>expected counts, normalize t"]:::core
+        M2["IBM Model 2 EM<br/>updates t and q"]:::core
+        T1[("Model 1 table<br/>t(target | source)")]:::data
+        T2[("Model 2 tables<br/>t and q(i | j, l, m)")]:::data
+    end
+
+    subgraph Edge["Interfaces (stdlib HTTP)"]
+        direction TB
+        Router["Router<br/>/health | /ready | /align | /translate | /evaluate"]:::core
+        Validate["Validation<br/>non-empty text, length cap, k range"]:::control
+    end
+
+    subgraph Infer["Inference (pure reads of the tables)"]
+        direction TB
+        Align["Word alignment<br/>argmax q x t per target word"]:::core
+        Translate["Word translation<br/>top-k t(target | source)"]:::core
+    end
+
+    subgraph Eval["Evaluation and observability"]
+        direction TB
+        AER["Alignment error rate<br/>Model 1 vs Model 2, NULL unscored"]:::obs
+        Metrics["Route metrics<br/>Prometheus GET /metrics"]:::obs
+    end
+
+    CLI -->|train models| M1
+    Corpus -->|sentence pairs| Tokenize
+    Tokenize -->|tokens + NULL| M1
+    M1 -->|initializes t| M2
+    M1 --> T1
+    M2 --> T2
+    Client -->|JSON request| Router --> Validate
+    Validate -->|POST /align| Align
+    Validate -->|POST /translate| Translate
+    T2 -.->|t and q| Align
+    T1 -.->|t| Translate
+    Router -->|GET /evaluate| AER
+    Align -->|Model 2 links| AER
+    T1 -.->|Model 1 links| AER
+    Gold -.->|sure links| AER
+    Router -.-> Metrics

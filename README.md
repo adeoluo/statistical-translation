@@ -27,10 +27,14 @@ rate** evaluation.
   <img src="docs/architecture/architecture.svg" alt="Architecture diagram" width="860">
 </p>
 
-Model 1 learns word translation probabilities ``t(target | source)`` by EM; Model 2 adds a
-position-dependent alignment probability ``q(i | j, l, m)`` on top, initialized from Model 1.
-The service aligns sentence pairs and translates words from the learned tables. See the
-[ADRs](docs/adr/) for the key decisions.
+<sub>Legend: amber = entry points and external systems, indigo = core logic, green = data and state, blue = validation and control, grey = observability and outputs.</sub>
+
+The bundled parallel corpus is tokenized with a NULL source token prepended. Model 1 learns
+word translation probabilities ``t(target | source)`` by EM; Model 2 adds a position-dependent
+alignment probability ``q(i | j, l, m)`` on top, initialized from Model 1. After validation,
+the service aligns sentence pairs from the Model 2 tables and translates words from the Model 1
+table; alignment error rate compares both models against held-out gold links, and every route
+is counted in the Prometheus metrics. See the [ADRs](docs/adr/) for the key decisions.
 
 ### How expectation-maximization learns alignment
 
