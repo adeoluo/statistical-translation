@@ -168,6 +168,12 @@ Alignment error rate on the held-out pairs.
   <img src="docs/demo/evaluate.gif" alt="Alignment error rate on the held-out pairs" width="860">
 </p>
 
+The HTTP service aligning a sentence pair and translating a word.
+
+<p align="center">
+  <img src="docs/demo/http.gif" alt="The HTTP service aligning a sentence pair and translating a word" width="860">
+</p>
+
 ## Design decisions
 
 - **Expectation-maximization over unaligned text.** Alignments are latent, so they are learned
