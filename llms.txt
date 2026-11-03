@@ -1,0 +1,36 @@
+# Statistical Translation
+
+> IBM Model 1 and Model 2 word alignment, built from scratch: expectation-maximization training, position-dependent alignment, and alignment-error-rate evaluation.
+
+Languages: Python. License: MIT. Source: https://github.com/adeoluo/statistical-translation
+
+## Docs
+
+- [README](https://github.com/adeoluo/statistical-translation/blob/main/README.md): motivation, architecture, results, quickstart, usage, design decisions, testing, responsible ai, limitations, roadmap
+- [AGENTS.md](https://github.com/adeoluo/statistical-translation/blob/main/AGENTS.md): layout, commands and conventions for changing the code
+- [Architecture diagram](https://github.com/adeoluo/statistical-translation/blob/main/docs/architecture/architecture.mmd): Mermaid source of the component diagram
+- [End-to-End Case Study - Discovering Word Alignments from Bitext](https://github.com/adeoluo/statistical-translation/blob/main/docs/CASE_STUDY.md)
+- [Data Card - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/DATA_CARD.md)
+- [Definition of Done](https://github.com/adeoluo/statistical-translation/blob/main/docs/DEFINITION_OF_DONE.md)
+- [Evaluation Report - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/EVALUATION_REPORT.md)
+- [System Card - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/MODEL_CARD.md)
+- [Operations Guide - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/OPERATIONS.md)
+- [Scaling and Design Tradeoffs - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/SCALING.md)
+- [Threat Model - Statistical Translation](https://github.com/adeoluo/statistical-translation/blob/main/docs/THREAT_MODEL.md)
+- [ADR-0001: Record architecture decisions](https://github.com/adeoluo/statistical-translation/blob/main/docs/adr/0001-record-architecture-decisions.md)
+- [ADR-0002: Learn alignment by expectation-maximization](https://github.com/adeoluo/statistical-translation/blob/main/docs/adr/0002-expectation-maximization.md)
+- [ADR-0003: Initialize Model 2 from a trained Model 1](https://github.com/adeoluo/statistical-translation/blob/main/docs/adr/0003-model2-initialization.md)
+- [ADR-NNNN: <short title>](https://github.com/adeoluo/statistical-translation/blob/main/docs/adr/template.md)
+- [Changelog](https://github.com/adeoluo/statistical-translation/blob/main/CHANGELOG.md): release history
+
+## Source
+
+- [src/statistical_translation/__init__.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/__init__.py): Statistical Translation - IBM Model 1 and 2 word alignment from scratch.
+- [src/statistical_translation/cli.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/cli.py): Command line interface for the statistical translation aligner.
+- [src/statistical_translation/corpus.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/corpus.py): Types for a parallel corpus of sentence pairs.
+- [src/statistical_translation/data.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/data.py): A bundled parallel corpus with gold word alignments for evaluation.
+- [src/statistical_translation/evaluation.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/evaluation.py): Alignment Error Rate evaluation for word alignment models.
+- [src/statistical_translation/ibm1.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/ibm1.py): IBM Model 1 word alignment, trained with expectation-maximization.
+- [src/statistical_translation/ibm2.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/ibm2.py): IBM Model 2 word alignment, trained with expectation-maximization.
+- [src/statistical_translation/observability.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/observability.py): In-process request metrics for the HTTP service (Prometheus text exposition).
+- [src/statistical_translation/service.py](https://github.com/adeoluo/statistical-translation/blob/main/src/statistical_translation/service.py): A standard-library HTTP service exposing the trained alignment models.

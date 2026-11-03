@@ -1,0 +1,39 @@
+# Changelog
+
+All notable changes to this project are documented here. The file is generated
+from Conventional Commits by [git-cliff](https://git-cliff.org) when a release is cut
+with `make cut-release`.
+
+## Unreleased
+
+### Features
+
+- Add parallel-corpus types and IBM Model 1 with EM training
+- Add IBM Model 2, a gold-aligned corpus, AER evaluation, and CLI
+- Add HTTP service with observability, benchmarks, and documentation
+
+### Bug fixes
+
+- Keep Unicode tokens and guard degenerate training inputs (#11)
+
+### Documentation
+
+- Use plain, factual wording (#9)
+- Use plain wording (replace a line-wrapped phrase missed earlier) (#10)
+- Standard README structure and language framing (#13)
+- Vertical layered architecture diagram
+- Horizontal layered architecture diagram
+- Compact horizontal architecture diagram
+- Recorded demos of more commands, with their vhs tapes (#1)
+- Recorded demos of the HTTP service and more commands (#2)
+- Describe the supply chain accurately (#3)
+
+### Build and CI
+
+- Run CodeQL on main and on a weekly schedule only
+
+### Maintenance
+
+- Scaffold statistical-translation project
+- Bump continuous integration action versions and dev dependencies
+- Remove Dependabot configuration
