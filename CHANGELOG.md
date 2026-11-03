@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The file is generated
 from Conventional Commits by [git-cliff](https://git-cliff.org) when a release is cut
 with `make cut-release`.
 
-## Unreleased
+## [0.1.0] 2026-11-03
 
 ### Features
 
@@ -37,3 +37,4 @@ with `make cut-release`.
 - Scaffold statistical-translation project
 - Bump continuous integration action versions and dev dependencies
 - Remove Dependabot configuration
+- Release tooling, changelog and agent guides (#4)
