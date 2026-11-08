@@ -1,10 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it."
+message: "If you use this software, please cite it as below."
+type: software
 title: "Statistical Translation"
+abstract: "Statistical machine translation alignment from scratch: IBM Model 1 and Model 2 word alignment trained by expectation-maximization, with alignment-error-rate evaluation."
 authors:
   - family-names: "Ogunnoiki"
     given-names: "Adeolu"
-version: 0.1.0
-date-released: 2026-01-01
+version: "0.1.0"
+date-released: "2026-11-03"
 license: MIT
+repository-code: "https://github.com/adeoluo/statistical-translation"
 url: "https://github.com/adeoluo/statistical-translation"
+keywords:
+  - "expectation-maximization"
+  - "from-scratch"
+  - "ibm-models"
+  - "machine-translation"
+  - "nlp"
+  - "python"
+  - "statistical-mt"
+  - "word-alignment"
